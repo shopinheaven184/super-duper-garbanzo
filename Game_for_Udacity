@@ -26,6 +26,13 @@ def get_user_word():
     return resp
 
 
+def init_answers(answers):
+    user_answers = {}
+    for answer in answers:
+        user_answers[answer] = False
+    return user_answers
+
+
 def check_user_level(us_lev,level):
     pass
     # for lev in level:
@@ -50,30 +57,47 @@ def replace_user_answer(question, answer, position):
     return question
 
 
+def all_questions_answered(answers):
+    all_answered = True
+    for answer in answers:
+        all_answered &= answers[answer]
+        if not all_answered:
+            break
+    return all_answered
+
+
+# Initialize the game
+user_answers = init_answers(first_answers)
+
 # Let's display a puzzled paragraph
 print "\n".join(textwrap.wrap(first_question, 80))
 print "\n"
-user_response = get_user_word()
 
 
-print "Your guess was " + user_response + "."
-ans_pos = check_user_word(user_response, first_answers)
+while True:
+    user_response = get_user_word()
+    if user_response == "quit":
+        quit()
+    print "Your guess was " + user_response + "."
+    ans_pos = check_user_word(user_response, first_answers)
 
-
-while first_question != first_question_answer:
     if ans_pos >= 0:
+        user_answers[user_response] = True
         print "Great Job! Here's your updated question"
         first_question = replace_user_answer(first_question, user_response, ans_pos)
         print "\n".join(textwrap.wrap(first_question, 80))
-    if raw_input() == "quit":
-        quit()
+        if all_questions_answered(user_answers):
+            break
     else:
         print "Your answer is not correct. You got this! Try again or enter 'quit' to exit."
     print "\n"
 
-print "Let's keep on going! Now here is the next one. " + "\n".join(textwrap.wrap(first_question, 80))
+print "\n"
+print "-" * 50
+print "Let's keep on going! Now here is the next one.\n" + "\n".join(textwrap.wrap(first_question, 80))
 
 
-# todo: ask for next answer
-# todo: how many are remaining
-# todo: has the answer already been used
+    # todo: ask for next answer
+    # todo: how many are remaining
+    # todo: has the answer already been used
+
